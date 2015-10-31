@@ -2,16 +2,25 @@ class Amaker:
     def __init__(self, width, height): # width/height are number of slots (18x10)
         self.width = " "*width
         self.height = height
-        size = []
+        self.size = []
         for i in range(0,self.height):
-            size.append(self.width)
-        self.size = size
-        
+            self.size.append(self.width)
     def add_tile(self, x, y): # add tile to the current frame at (x,y)
-        pass
-
+        a = ""
+        for i in range(0,len(self.width)):
+            if(i == x):
+                a += "#"
+            else:
+                a += self.size[y][i]
+        self.size[y] = a
     def remove_tile(self, x, y): # from the current frame
-        pass
+        a = ""
+        for i in range(0,len(self.width)):
+            if(i == x):
+                a += " "
+            else:
+                a += self.size[y][i]
+        self.size[y] = a
 
     def move_tile(self, x1, y1, x2, y2):
         pass
@@ -28,7 +37,7 @@ class Amaker:
     def display_current_frame(self):  # print out the frame in text-mode
         for i in range(0,len(self.size)):
             print(self.size[i])
-
+        print("------------------")
     def get_total_number_of_tiles(self):
         pass
 
@@ -42,15 +51,16 @@ def main():
     a.add_tile(10, 1)
     a.add_tile(4, 3)
 
+    a.display_current_frame()
     a.remove_tile(10, 1)
 
     a.display_current_frame()
 
     a.add_frame()
 
-    a.move_tile(6, 1, 6, 2)
+    #a.move_tile(6, 1, 6, 2)
 
-    a.display_current_frame()
+    #a.display_current_frame()
 
     print('Exit')
 
