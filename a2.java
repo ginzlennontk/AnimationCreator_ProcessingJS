@@ -1,3 +1,5 @@
+Amaker a = new Amaker(18, 10);
+
 class Amaker {
   int widthX, heightY;
   int size[][];
@@ -9,7 +11,8 @@ class Amaker {
     size = new int[heightY][widthX];
     frameNum = 0;
     frame = new int[100][heightY][widthX];
-  }int[][] get_size() {
+  }
+  int[][] get_size() {
     return size;
   }
   int[][][] get_frame() {
@@ -42,7 +45,9 @@ class Acontroller {
     a.setFrame(1);
     for (int i = 0; i<a.get_size().length; i++) {
       for (int j = 0; j<a.get_size()[i].length; j++) {
+        if (mouseButton == LEFT && buttonPosition(j*30,i*30,30,30))
         a.get_frame()[a.get_frameNum()-1][i][j] = a.get_size()[i][j];
+
       }
     }
     println("!Add Frame!");
@@ -65,36 +70,51 @@ class Aviewer {
       for (int j = 0; j<a.get_size()[i].length; j++) {
         if (a.get_size()[i][j] == 0) {
           fill(#FFFFFF);
-        }else{
+        } else {
           fill(#FF0000);
         }
-          rect(x,y,30,30);
-          x+=30;
+        rect(x, y, 30, 30);
+        x+=30;
       }
       y+=30;
     }
   }
+  void display_all_frame() {
+    println("\nDisplay All Frame");
+    for (int k = 0; k<a.get_frameNum(); k++) {
+      for (int i = 0; i<a.get_size().length; i++) {
+        for (int j = 0; j<a.get_size()[i].length; j++) {
+          print(a.get_frame()[k][i][j]);
+        }
+        println();
+      }
+      println("------------------");
+    }
+  }
+}
+void setup(){
+  size(540, 300);
+  
+}
+void draw() {
+  Aviewer c = new Aviewer(a);
+  c.display_current_frame(); 
 }
 
-void setup() {
-  Amaker a = new Amaker(18, 10); 
-  Acontroller b = new Acontroller(a); 
-  Aviewer c = new Aviewer(a); 
-  size(540,300);
-  b.add_tile(4, 1); 
-  b.add_tile(6, 1); 
-  b.add_tile(10, 1); 
-  b.add_tile(4, 3); 
-  c.display_current_frame(); 
-  b.add_frame(); 
-
-  b.remove_tile(10, 1); 
-  c.display_current_frame(); 
-  b.add_frame(); 
-
-  b.move_tile(6, 1, 6, 2); 
-  c.display_current_frame(); 
-  b.add_frame(); 
- 
-  b.remove_frame(); 
+void mouseClicked(){
+  Acontroller b = new Acontroller(a);
+  for (int i = 0; i<a.get_size().length; i++) {
+      for (int j = 0; j<a.get_size()[i].length; j++) {
+        if (mouseButton == LEFT && buttonPosition(j*30,i*30,30,30)) {
+          b.add_tile(j, i);
+      }
+    }
+  }
+}
+boolean buttonPosition(int x, int y, int buttonWidth, int buttonHeight) {
+  if (mouseX >= x && mouseX <= x+buttonWidth && mouseY >= y && mouseY <= y+buttonHeight) {
+    return true;
+  } else {
+    return false;
+  }
 }
