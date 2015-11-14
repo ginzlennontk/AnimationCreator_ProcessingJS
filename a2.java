@@ -45,9 +45,8 @@ class Acontroller {
     a.setFrame(1);
     for (int i = 0; i<a.get_size().length; i++) {
       for (int j = 0; j<a.get_size()[i].length; j++) {
-        if (mouseButton == LEFT && buttonPosition(j*30,i*30,30,30))
-        a.get_frame()[a.get_frameNum()-1][i][j] = a.get_size()[i][j];
-
+        if (mouseButton == LEFT && buttonPosition(j*30, i*30, 30, 30))
+          a.get_frame()[a.get_frameNum()-1][i][j] = a.get_size()[i][j];
       }
     }
     println("!Add Frame!");
@@ -92,21 +91,23 @@ class Aviewer {
     }
   }
 }
-void setup(){
+void setup() {
   size(540, 300);
-  
 }
 void draw() {
   Aviewer c = new Aviewer(a);
-  c.display_current_frame(); 
+  c.display_current_frame();
 }
 
-void mouseClicked(){
+void mouseClicked() {
   Acontroller b = new Acontroller(a);
   for (int i = 0; i<a.get_size().length; i++) {
-      for (int j = 0; j<a.get_size()[i].length; j++) {
-        if (mouseButton == LEFT && buttonPosition(j*30,i*30,30,30)) {
-          b.add_tile(j, i);
+    for (int j = 0; j<a.get_size()[i].length; j++) {
+      if (mouseButton == LEFT && buttonPosition(j*30, i*30, 30, 30)) {
+        b.add_tile(j, i);
+      }
+      if (mouseButton == RIGHT && buttonPosition(j*30,i*30,30,30)) {
+          b.remove_tile(j, i);
       }
     }
   }
