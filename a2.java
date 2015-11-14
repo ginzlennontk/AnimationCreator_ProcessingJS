@@ -1,25 +1,18 @@
 class Amaker {
   int widthX, heightY;
-  String size[][];
+  int size[][];
   int frameNum;
-  String frame[][][];
+  int frame[][][];
   Amaker(int w, int h) {
     widthX = w;
     heightY = h;
-    size = new String[heightY][widthX];
+    size = new int[heightY][widthX];
     frameNum = 0;
-    frame = new String[100][heightY][widthX];
-  }
-  int get_w() {
-    return widthX;
-  }
-  int get_h() {
-    return heightY;
-  }
-  String[][] get_size() {
+    frame = new int[100][heightY][widthX];
+  }int[][] get_size() {
     return size;
   }
-  String[][][] get_frame() {
+  int[][][] get_frame() {
     return frame;
   }
   int get_frameNum() {
@@ -29,20 +22,21 @@ class Amaker {
     frameNum+=set;
   }
 }
+
 class Acontroller {
   Amaker a;
   Acontroller(Amaker b) {
     a = b;
   }
   void add_tile(int x, int y) {
-    a.get_size()[y][x] = "#";
+    a.get_size()[y][x] = 1;
   }
   void remove_tile(int x, int y) {
-    a.get_size()[y][x] = " ";
+    a.get_size()[y][x] = 0;
   }
   void move_tile(int x1, int y1, int x2, int y2) {
-    a.get_size()[y1][x1] = " ";
-    a.get_size()[y2][x2] = "#";
+    a.get_size()[y1][x1] = 0;
+    a.get_size()[y2][x2] = 1;
   }
   void add_frame() {
     a.setFrame(1);
@@ -58,46 +52,35 @@ class Acontroller {
     println("!Remove Frame!");
   }
 }
+
 class Aviewer {
   Amaker a; 
   Aviewer(Amaker b) {
     a = b;
   }
   void display_current_frame() {
+    int y = 0;
     for (int i = 0; i<a.get_size().length; i++) {
+      int x = 0;
       for (int j = 0; j<a.get_size()[i].length; j++) {
-        if (a.get_size()[i][j] == null) {
-          print(" ");
-        } else {
-          print(a.get_size()[i][j]);
+        if (a.get_size()[i][j] == 0) {
+          fill(#FFFFFF);
+        }else{
+          fill(#FF0000);
         }
+          rect(x,y,30,30);
+          x+=30;
       }
-      println();
-    }
-    println("------------------");
-  }
-  void display_all_frame() {
-    println("\nDisplay All Frame");
-    for (int k = 0; k<a.get_frameNum(); k++) {
-      for (int i = 0; i<a.get_size().length; i++) {
-        for (int j = 0; j<a.get_size()[i].length; j++) {
-          if (a.get_frame()[k][i][j] == null) {
-            print(" ");
-          } else {
-            print(a.get_frame()[k][i][j]);
-          }
-        }
-        println();
-      }
-      println("------------------");
+      y+=30;
     }
   }
 }
+
 void setup() {
   Amaker a = new Amaker(18, 10); 
   Acontroller b = new Acontroller(a); 
   Aviewer c = new Aviewer(a); 
-
+  size(540,300);
   b.add_tile(4, 1); 
   b.add_tile(6, 1); 
   b.add_tile(10, 1); 
@@ -112,7 +95,6 @@ void setup() {
   b.move_tile(6, 1, 6, 2); 
   c.display_current_frame(); 
   b.add_frame(); 
-  c.display_all_frame(); 
+ 
   b.remove_frame(); 
-  c.display_all_frame();
 }
