@@ -41,24 +41,25 @@ class Amaker {
 class Acontroller {
   Amaker m;
   Aviewer v;
-  int[][] current;
   int move = 0;
   int x1;
   int y1;
   Acontroller(Amaker maker, Aviewer viewer) {
     m = maker;
     v = viewer;
-    current = m.get_size();
   }
   void add_tile(int x, int y) { 
+    int[][] current = m.get_size();
     current[y][x] = 1;
     m.set_size(current);
   }
   void remove_tile(int x, int y) { 
+    int[][] current = m.get_size();
     current[y][x] = 0;
     m.set_size(current);
   }
-  void move_tile(int x1, int y1, int x2, int y2) { 
+  void move_tile(int x1, int y1, int x2, int y2) {
+    int[][] current = m.get_size();
     current[y2][x2] = 1;
     current[y1][x1] = 0;
     m.set_size(current);
@@ -90,11 +91,12 @@ class Acontroller {
     println("!Remove Frame!");
   }
 
-
   void tileDisplay() {
     v.display();
   }
-  
+  void controlDisplay() { 
+    controlButton(10, 25, 90, 40, 4, #008800, "Add Frame", 255);
+  }
 
   void clicked() {    
     for (int i = 0; i<m.get_size().length; i++) {
@@ -123,6 +125,10 @@ class Acontroller {
           move = 0;
         }
       }
+    }
+
+    if (buttonPosition(20, 25, 90, 40)) {
+      add_frame();
     }
   }
 }
@@ -172,20 +178,21 @@ void setup() {
 }
 void draw() {
   background(#DDEEFF);
+  c.controlDisplay();
   c.tileDisplay();
-
 }
 
 void mousePressed() {
   c.clicked();
 }
-void keyPressed() {
-  if (key == 'x' || key == 'X') {
-    c.add_frame();
-  }
-  if (key == 'z' || key == 'Z') {
-    c.remove_frame();
-  }
+
+
+void controlButton(int x, int y, int buttonWidth, int buttonHeight, int corner, int buttonColor, String textButton, int textColor) {
+  fill(buttonColor);
+  rect(x, y, buttonWidth, buttonHeight, corner);
+  fill(textColor);
+  textAlign(CENTER, CENTER);
+  text(textButton, x+(buttonWidth/2), y+(buttonHeight/2.5));
 }
 
 boolean buttonPosition(int x, int y, int buttonWidth, int buttonHeight) {
