@@ -96,6 +96,7 @@ class Acontroller {
   }
   void controlDisplay() { 
     controlButton(10, 25, 90, 40, 4, #008800, "Add Frame", 255);
+    controlButton(110, 25, 90, 40, 4, #FF0000, "Remove Frame", 255);
   }
 
   void clicked() {    
@@ -129,6 +130,8 @@ class Acontroller {
 
     if (buttonPosition(20, 25, 90, 40)) {
       add_frame();
+    }else if(buttonPosition(110, 25, 90, 40)){
+      remove_frame();
     }
   }
 }
@@ -185,6 +188,15 @@ void draw() {
 void mousePressed() {
   c.clicked();
 }
+void keyPressed() {
+  if (key == 'x' || key == 'X') {
+    c.add_frame();
+  }
+  if (key == 'z' || key == 'Z') {
+    c.remove_frame();
+  }
+}
+
 
 
 void controlButton(int x, int y, int buttonWidth, int buttonHeight, int corner, int buttonColor, String textButton, int textColor) {
