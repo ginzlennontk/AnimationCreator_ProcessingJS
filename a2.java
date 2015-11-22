@@ -44,23 +44,22 @@ class Acontroller {
   int move = 0;
   int x1;
   int y1;
+  int[][] current;
   Acontroller(Amaker maker, Aviewer viewer) {
     m = maker;
     v = viewer;
+    current = m.get_size();
   }
   void add_tile(int x, int y) { 
-    int[][] current = m.get_size();
     current[y][x] = 1;
     m.set_size(current);
   }
   void remove_tile(int x, int y) { 
-    int[][] current = m.get_size();
     current[y][x] = 0;
     m.set_size(current);
   }
   void move_tile(int x1, int y1, int x2, int y2) {
-    int[][] current = m.get_size();
-    current[y2][x2] = 1;
+    current[y2][x2] = 3;
     current[y1][x1] = 0;
     m.set_size(current);
     print("!Moved Frame!");
@@ -88,9 +87,10 @@ class Acontroller {
     } else {
       m.set_frame(emptyFrame);
     }
+
     println("!Remove Frame!");
   }
-  
+
   void remove_allFrame() {
     int[][][] emptyFrame = new int[0][m.get_h()][m.get_w()];
     m.setFrame(-(m.get_frameNum()));
@@ -110,7 +110,7 @@ class Acontroller {
   void clicked() {    
     for (int i = 0; i<m.get_size().length; i++) {
       for (int j = 0; j<m.get_size()[i].length; j++) {
-        if (mouseButton == LEFT && m.get_size()[i][j] != 1 && move != 1 && buttonPosition((j*26)+v.get_viewX(), (i*26)+v.get_viewY(), 25, 25)) {
+        if (mouseButton == LEFT && m.get_size()[i][j] == 0 && move != 1 && buttonPosition((j*26)+v.get_viewX(), (i*26)+v.get_viewY(), 25, 25)) {
           add_tile(j, i);
         } else if (mouseButton == RIGHT && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           remove_tile(j, i);
@@ -125,31 +125,36 @@ class Acontroller {
             }
             println("------------------");
           }
+          for (int n = 0; n < m.get_size().length; n++) {
+            for (int l = 0; l < m.get_size()[i].length; l++) {
+              if (current[n][l] == 2) {
+                remove_tile(l, n);
+              }
+            }
+          }
         } else if (mouseButton == LEFT && move == 0 && m.get_size()[i][j] == 1 &&  buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           x1 = j;
           y1 = i;
-          int[][] current = m.get_size();
-          if (j-1 >= 0 && current[i][j-1] != 1) {
+          if (j-1 >= 0 && current[i][j-1] == 0) {
             current[i][j-1] = 2;
           }
-          if (j+1 <= current[0].length-1 && current[i][j+1] != 1) {
+          if (j+1 <= current[0].length-1 && current[i][j+1] == 0) {
             current[i][j+1] = 2;
           }
-          if (i-1 >= 0 && current[i-1][j] != 1) {
+          if (i-1 >= 0 && current[i-1][j] == 0) {
             current[i-1][j] = 2;
           }
-          if (i+1 <= current.length-1 && current[i+1][j] != 1) {
+          if (i+1 <= current.length-1 && current[i+1][j] == 0) {
             current[i+1][j] = 2;
           }
           m.set_size(current);
           move = 1;
         } else if (mouseButton == LEFT && move == 1 && m.get_size()[i][j] == 2 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           move_tile(x1, y1, j, i);
-          int[][] current = m.get_size();
           for (int n = 0; n < m.get_size().length; n++) {
             for (int l = 0; l < m.get_size()[i].length; l++) {
               if (current[n][l] == 2) {
-                current[n][l] = 0;
+                remove_tile(l, n);
               }
             }
           }
@@ -159,11 +164,18 @@ class Acontroller {
     }
 
     if (buttonPosition(20, 25, 90, 40)) {
+      for (int n = 0; n < m.get_size().length; n++) {
+        for (int l = 0; l < m.get_size()[n].length; l++) {
+          if (current[n][l] == 3) {
+            add_tile(l, n);
+          }
+        }
+      }
       add_frame();
     } else if (buttonPosition(110, 25, 90, 40)) {
       remove_frame();
-    } else if (buttonPosition(10, 75, 190, 40)){
-     remove_allFrame(); 
+    } else if (buttonPosition(10, 75, 190, 40)) {
+      remove_allFrame();
     }
   }
 }
@@ -186,9 +198,11 @@ class Aviewer {
         if (m.get_size()[i][j] == 0) {
           fill(#FFFFFF);
         } else if (m.get_size()[i][j] == 1) {
-          fill(#FF0000);
+          fill(#000000);
         } else if (m.get_size()[i][j] == 2) {
           fill(#33FF33);
+        } else if (m.get_size()[i][j] == 3) {
+          fill(#FF0000);
         }
         rect(posX, posY, tileSize, tileSize);
         posX += tileSize+1;
