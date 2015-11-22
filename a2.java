@@ -118,11 +118,33 @@ class Acontroller {
             println("------------------");
           }
         } else if (mouseButton == LEFT && move == 0 && m.get_size()[i][j] == 1 &&  buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
-          move = 1;
           x1 = j;
           y1 = i;
-        } else if (mouseButton == LEFT && move == 1 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
+          int[][] current = m.get_size();
+          if (j-1 >= 0 && current[i][j-1] != 1) {
+            current[i][j-1] = 2;
+          }
+          if (j+1 <= current[0].length-1 && current[i][j+1] != 1) {
+            current[i][j+1] = 2;
+          }
+          if (i-1 >= 0 && current[i-1][j] != 1) {
+            current[i-1][j] = 2;
+          }
+          if (i+1 <= current.length-1 && current[i+1][j] != 1) {
+            current[i+1][j] = 2;
+          }
+          m.set_size(current);
+          move = 1;
+        } else if (mouseButton == LEFT && move == 1 && m.get_size()[i][j] == 2 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           move_tile(x1, y1, j, i);
+          int[][] current = m.get_size();
+          for (int n = 0; n < m.get_size().length; n++) {
+            for (int l = 0; l < m.get_size()[i].length; l++) {
+              if (current[n][l] == 2) {
+                current[n][l] = 0;
+              }
+            }
+          }
           move = 0;
         }
       }
@@ -130,7 +152,7 @@ class Acontroller {
 
     if (buttonPosition(20, 25, 90, 40)) {
       add_frame();
-    }else if(buttonPosition(110, 25, 90, 40)){
+    } else if (buttonPosition(110, 25, 90, 40)) {
       remove_frame();
     }
   }
@@ -188,15 +210,6 @@ void draw() {
 void mousePressed() {
   c.clicked();
 }
-void keyPressed() {
-  if (key == 'x' || key == 'X') {
-    c.add_frame();
-  }
-  if (key == 'z' || key == 'Z') {
-    c.remove_frame();
-  }
-}
-
 
 
 void controlButton(int x, int y, int buttonWidth, int buttonHeight, int corner, int buttonColor, String textButton, int textColor) {
