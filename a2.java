@@ -1,5 +1,5 @@
 Acontroller c;
-
+int run = 0;
 class Amaker {
   int widthX, heightY;
   int size[][];
@@ -106,6 +106,9 @@ class Acontroller {
     controlButton(110, 25, 90, 40, 4, #FF0000, "Remove Frame", 255);
     controlButton(10, 75, 190, 40, 4, #FF0000, " Remove All Frame ", 255);
   }
+  void playA() {
+    v.play();
+  }
 
   void clicked() {    
     for (int i = 0; i<m.get_size().length; i++) {
@@ -116,15 +119,6 @@ class Acontroller {
           remove_tile(j, i);
           move = 0;   
           println("\nDisplay All Frame");
-          for (int k = 0; k<m.get_frameNum(); k++) {
-            for (int n = 0; n < m.get_size().length; n++) {
-              for (int l = 0; l < m.get_size()[i].length; l++) {
-                print(m.get_frame()[k][n][l]);
-              }
-              println();
-            }
-            println("------------------");
-          }
           for (int n = 0; n < m.get_size().length; n++) {
             for (int l = 0; l < m.get_size()[i].length; l++) {
               if (current[n][l] == 2) {
@@ -184,6 +178,7 @@ class Aviewer {
   Amaker m;
   int x;
   int y;
+  float frame;
   Aviewer(Amaker maker) {
     m = maker;
     x = 210;
@@ -217,30 +212,62 @@ class Aviewer {
   int get_viewY() {
     return y;
   }
+  void play() {
+    int tileSize = 25;
+    
+    for (int i = 0; i <= (int)frame%m.get_frame().length;i++ ) {
+      int posY = y;
+      for (int k = 0; k < m.get_frame()[i].length; k++) {
+        int posX = x; 
+        for (int j = 0; j < m.get_frame()[i][k].length; j++) {
+          if (m.get_frame()[i][k][j] == 0) {
+            fill(#FFFFFF);
+          } else if (m.get_frame()[i][k][j] == 1) {
+            fill(#000000);
+          }
+          rect(posX, posY, tileSize, tileSize); 
+          posX += tileSize+1;
+        }
+        posY += tileSize+1;
+      }
+    }
+    frame += 0.03;
+  }
 }
-
 void setup() {
-  size(700, 350);
-  Amaker m = new Amaker(18, 10);
-  Aviewer v = new Aviewer(m);
+  size(700, 350); 
+  //frameRate(1);
+  Amaker m = new Amaker(18, 10); 
+  Aviewer v = new Aviewer(m); 
   c = new Acontroller(m, v);
 }
 void draw() {
-  background(#DDEEFF);
-  c.controlDisplay();
-  c.tileDisplay();
+  background(#DDEEFF); 
+  c.controlDisplay(); 
+  if (run == 0) {
+    //frameRate(120); 
+    c.tileDisplay();
+  } else {
+    //frameRate(15); 
+    c.playA(); 
+    //c.tileDisplay();
+  }
 }
 
 void mousePressed() {
   c.clicked();
 }
-
+void keyPressed() {
+  if (key == 'z' || key == 'Z') {
+    run = 1;
+  }
+}
 
 void controlButton(int x, int y, int buttonWidth, int buttonHeight, int corner, int buttonColor, String textButton, int textColor) {
-  fill(buttonColor);
-  rect(x, y, buttonWidth, buttonHeight, corner);
-  fill(textColor);
-  textAlign(CENTER, CENTER);
+  fill(buttonColor); 
+  rect(x, y, buttonWidth, buttonHeight, corner); 
+  fill(textColor); 
+  textAlign(CENTER, CENTER); 
   text(textButton, x+(buttonWidth/2), y+(buttonHeight/2.5));
 }
 
