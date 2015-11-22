@@ -90,6 +90,13 @@ class Acontroller {
     }
     println("!Remove Frame!");
   }
+  
+  void remove_allFrame() {
+    int[][][] emptyFrame = new int[0][m.get_h()][m.get_w()];
+    m.setFrame(-(m.get_frameNum()));
+    m.set_frame(emptyFrame);
+    println("!Remove All Frame!");
+  }
 
   void tileDisplay() {
     v.display();
@@ -97,6 +104,7 @@ class Acontroller {
   void controlDisplay() { 
     controlButton(10, 25, 90, 40, 4, #008800, "Add Frame", 255);
     controlButton(110, 25, 90, 40, 4, #FF0000, "Remove Frame", 255);
+    controlButton(10, 75, 190, 40, 4, #FF0000, " Remove All Frame ", 255);
   }
 
   void clicked() {    
@@ -154,6 +162,8 @@ class Acontroller {
       add_frame();
     } else if (buttonPosition(110, 25, 90, 40)) {
       remove_frame();
+    } else if (buttonPosition(10, 75, 190, 40)){
+     remove_allFrame(); 
     }
   }
 }
