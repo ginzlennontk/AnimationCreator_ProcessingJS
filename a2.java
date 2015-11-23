@@ -17,7 +17,11 @@ class Amaker {
     return size;
   }
   void set_size(int[][] current) {
-    size = current;
+    for(int i = 0; i < size.length;i++){
+        for(int j = 0; j < size[i].length;j++){
+          size[i][j] = current[i][j];
+        }
+      }
   }
   int[][][] get_frame() {
     return frame;
@@ -45,7 +49,7 @@ class Acontroller {
   int x1;
   int y1;
   int[][] current;
-  int run;
+  int run,pause;
   Acontroller(Amaker maker, Aviewer viewer) {
     m = maker;
     v = viewer;
@@ -91,14 +95,23 @@ class Acontroller {
 
     println("!Remove Frame!");
   }
-
   void remove_allFrame() {
     int[][][] emptyFrame = new int[0][m.get_h()][m.get_w()];
+    int[][] emptySize = new int[m.get_h()][m.get_w()];
     m.setFrame(-(m.get_frameNum()));
     m.set_frame(emptyFrame);
+    m.set_size(emptySize);
     println("!Remove All Frame!");
   }
-
+  void reset_frame() {
+    if (m.get_frame().length > 0) {
+      m.set_size(m.get_frame()[m.get_frame().length-1]);
+      
+    } else {
+      int[][] emptyFrame = new int[m.get_h()][m.get_w()];
+      m.set_size(emptyFrame);
+    }
+  }
   void tileDisplay() {
     v.display();
   }
@@ -106,6 +119,7 @@ class Acontroller {
     controlButton(10, 25, 90, 40, 4, #008800, "Add Frame", 255);
     controlButton(110, 25, 90, 40, 4, #FF0000, "Remove Frame", 255);
     controlButton(10, 75, 190, 40, 4, #FF0000, "Remove All Frame", 255);
+    controlButton(55, 125, 100, 40, 4, #FF8800, "Reset Frame", 255);
     controlButton(370, 290, 40, 40, 4, #008800, "Play", 255);
     controlButton(435, 290, 40, 40, 4, #FF8800, "Pause", 255);
     controlButton(500, 290, 40, 40, 4, #FF0000, "Stop", 255);
@@ -114,15 +128,15 @@ class Acontroller {
     v.playDisplay();
     v.setFrame(1);
   }
-  int get_run(){
+  int get_run() {
     return run;
   }
   void clicked() {
     for (int i = 0; i<m.get_size().length; i++) {
       for (int j = 0; j<m.get_size()[i].length; j++) {
-        if (mouseButton == LEFT && m.get_size()[i][j] == 0 && move != 1 && buttonPosition((j*26)+v.get_viewX(), (i*26)+v.get_viewY(), 25, 25)) {
+        if (mouseButton == LEFT && m.get_size()[i][j] == 0 && run != 1 && pause != 1 && move != 1 && buttonPosition((j*26)+v.get_viewX(), (i*26)+v.get_viewY(), 25, 25)) {
           add_tile(j, i);
-        } else if (mouseButton == RIGHT && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
+        } else if (mouseButton == RIGHT && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)  && run != 1 && pause != 1 ) {
           remove_tile(j, i);
           move = 0;   
           println("\nDisplay All Frame");
@@ -130,10 +144,11 @@ class Acontroller {
             for (int l = 0; l < m.get_size()[i].length; l++) {
               if (current[n][l] == 2) {
                 remove_tile(l, n);
+                move = 0;
               }
             }
           }
-        } else if (mouseButton == LEFT && move == 0 && m.get_size()[i][j] == 1 &&  buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
+        } else if (mouseButton == LEFT && move == 0 && run != 1 && pause != 1 && m.get_size()[i][j] == 1 &&  buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           x1 = j;
           y1 = i;
           if (j-1 >= 0 && current[i][j-1] == 0) {
@@ -150,39 +165,83 @@ class Acontroller {
           }
           m.set_size(current);
           move = 1;
-        } else if (mouseButton == LEFT && move == 1 && m.get_size()[i][j] == 2 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
+        } else if (mouseButton == LEFT && move == 1  && run != 1 && pause != 1 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25) && i == y1 && j == x1) {
+          for (int n = 0; n < m.get_size().length; n++) {
+            for (int l = 0; l < m.get_size()[i].length; l++) {
+              if (current[n][l] == 2) {
+                remove_tile(l, n);
+                move = 0;
+              }
+            }
+          }
+          m.set_size(current);
+        } else if (mouseButton == LEFT && move == 1  && run != 1 && pause != 1 && m.get_size()[i][j] == 1 &&  buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
+          x1 = j;
+          y1 = i;
+          for (int n = 0; n < m.get_size().length; n++) {
+            for (int l = 0; l < m.get_size()[i].length; l++) {
+              if (current[n][l] == 2) {
+                remove_tile(l, n);
+                move = 0;
+              }
+            }
+          }
+          if (j-1 >= 0 && current[i][j-1] == 0) {
+            current[i][j-1] = 2;
+          }
+          if (j+1 <= current[0].length-1 && current[i][j+1] == 0) {
+            current[i][j+1] = 2;
+          }
+          if (i-1 >= 0 && current[i-1][j] == 0) {
+            current[i-1][j] = 2;
+          }
+          if (i+1 <= current.length-1 && current[i+1][j] == 0) {
+            current[i+1][j] = 2;
+          }
+          m.set_size(current);
+          move = 1;
+        } else if (mouseButton == LEFT && move == 1  && run != 1 && pause != 1 && m.get_size()[i][j] == 2 && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)) {
           move_tile(x1, y1, j, i);
           for (int n = 0; n < m.get_size().length; n++) {
             for (int l = 0; l < m.get_size()[i].length; l++) {
               if (current[n][l] == 2) {
                 remove_tile(l, n);
+                move = 0;
               }
             }
           }
-          move = 0;
         }
       }
     }
 
-    if (buttonPosition(20, 25, 90, 40)) {
+    if (buttonPosition(20, 25, 90, 40) && run != 1 && pause != 1) {
       for (int n = 0; n < m.get_size().length; n++) {
         for (int l = 0; l < m.get_size()[n].length; l++) {
+          if (current[n][l] == 2) {
+            remove_tile(l, n);
+            move = 0;
+          }
           if (current[n][l] == 3) {
             add_tile(l, n);
           }
         }
       }
       add_frame();
-    } else if (buttonPosition(110, 25, 90, 40)) {
+    } else if (buttonPosition(110, 25, 90, 40) && run != 1  && pause != 1) {
       remove_frame();
-    } else if (buttonPosition(10, 75, 190, 40)) {
+    } else if (buttonPosition(10, 75, 190, 40) && run != 1  && pause != 1) {
       remove_allFrame();
-    } else if (buttonPosition(370, 290, 40, 40)) {
+    } else if (buttonPosition(55, 125, 100, 40) && run != 1 && pause != 1) {
+      reset_frame();
+    } else if (buttonPosition(370, 290, 40, 40) && m.get_frame().length > 0) {
       run = 1;
+      pause = 0;
     } else if (buttonPosition(435, 290, 40, 40)) {
       run = 0;
+      pause = 1;
     } else if (buttonPosition(500, 290, 40, 40)) {
       run = 0;
+      pause = 0;
       v.resetFrame();
       m.set_size(m.get_frame()[m.get_frame().length-1]);
     }
@@ -227,24 +286,20 @@ class Aviewer {
   int get_viewY() {
     return y;
   }
-  void resetFrame(){
+  void resetFrame() {
     frame = 0;
   }
-  void setFrame(int value){
+  void setFrame(int value) {
     frame += value;
   }
   void playDisplay() {
-    int i = 0;
-    if(frame >= m.get_frame().length) {
+    if (frame >= m.get_frame().length) {
       resetFrame();
     }
-    //while ( i <= (int)frame%m.get_frame().length) {
-      if(frame < m.get_frame().length) {
+    if (frame < m.get_frame().length) {
       m.set_size(m.get_frame()[(int)frame]);
       display();
-      i++;
     }
-    //frame += 0.1;
   }
 }
 void setup() {
