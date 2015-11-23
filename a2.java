@@ -1,5 +1,5 @@
 Acontroller c;
-int run = 0;
+
 class Amaker {
   int widthX, heightY;
   int size[][];
@@ -45,6 +45,7 @@ class Acontroller {
   int x1;
   int y1;
   int[][] current;
+  int run;
   Acontroller(Amaker maker, Aviewer viewer) {
     m = maker;
     v = viewer;
@@ -104,12 +105,18 @@ class Acontroller {
   void controlDisplay() { 
     controlButton(10, 25, 90, 40, 4, #008800, "Add Frame", 255);
     controlButton(110, 25, 90, 40, 4, #FF0000, "Remove Frame", 255);
-    controlButton(10, 75, 190, 40, 4, #FF0000, " Remove All Frame ", 255);
+    controlButton(10, 75, 190, 40, 4, #FF0000, "Remove All Frame", 255);
+    controlButton(370, 290, 40, 40, 4, #008800, "Play", 255);
+    controlButton(435, 290, 40, 40, 4, #FF8800, "Pause", 255);
+    controlButton(500, 290, 40, 40, 4, #FF0000, "Stop", 255);
   }
   void playA() {
-    v.play();
+    v.playDisplay();
+    v.setFrame(1);
   }
-
+  int get_run(){
+    return run;
+  }
   void clicked() {
     for (int i = 0; i<m.get_size().length; i++) {
       for (int j = 0; j<m.get_size()[i].length; j++) {
@@ -170,6 +177,14 @@ class Acontroller {
       remove_frame();
     } else if (buttonPosition(10, 75, 190, 40)) {
       remove_allFrame();
+    } else if (buttonPosition(370, 290, 40, 40)) {
+      run = 1;
+    } else if (buttonPosition(435, 290, 40, 40)) {
+      run = 0;
+    } else if (buttonPosition(500, 290, 40, 40)) {
+      run = 0;
+      v.resetFrame();
+      m.set_size(m.get_frame()[m.get_frame().length-1]);
     }
   }
 }
@@ -187,7 +202,7 @@ class Aviewer {
   void display() {
     int tileSize = 25;
     int posY = y;
-    for (int i = 0; i < m.get_size().length; i++) {
+    for (int i = 0; i < m.get_size().length; i++) {  
       int posX = x;
       for (int j = 0; j < m.get_size()[i].length; j++) {
         if (m.get_size()[i][j] == 0) {
@@ -212,21 +227,28 @@ class Aviewer {
   int get_viewY() {
     return y;
   }
-  void play() {
+  void resetFrame(){
+    frame = 0;
+  }
+  void setFrame(int value){
+    frame += value;
+  }
+  void playDisplay() {
     int i = 0;
-    while ( i <= (int)frame%m.get_frame().length) {
-      m.set_size(m.get_frame()[i]);
+    if(frame >= m.get_frame().length) {
+      resetFrame();
+    }
+    //while ( i <= (int)frame%m.get_frame().length) {
+      if(frame < m.get_frame().length) {
+      m.set_size(m.get_frame()[(int)frame]);
       display();
       i++;
     }
-    frame += 0.03;
-  }
-  void stoppu(){
+    //frame += 0.1;
   }
 }
 void setup() {
   size(700, 350); 
-  //frameRate(1);
   Amaker m = new Amaker(18, 10); 
   Aviewer v = new Aviewer(m); 
   c = new Acontroller(m, v);
@@ -234,20 +256,16 @@ void setup() {
 void draw() {
   background(#DDEEFF); 
   c.controlDisplay(); 
-  if (run == 0) { 
+  if (c.get_run() == 0) { 
     c.tileDisplay();
   } else { 
+    frameRate(15);
     c.playA();
   }
 }
 
 void mousePressed() {
   c.clicked();
-}
-void keyPressed() {
-  if (key == 'z' || key == 'Z') {
-    run = 1;
-  }
 }
 
 void controlButton(int x, int y, int buttonWidth, int buttonHeight, int corner, int buttonColor, String textButton, int textColor) {
