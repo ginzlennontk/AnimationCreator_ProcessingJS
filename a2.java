@@ -110,7 +110,7 @@ class Acontroller {
     v.play();
   }
 
-  void clicked() {    
+  void clicked() {
     for (int i = 0; i<m.get_size().length; i++) {
       for (int j = 0; j<m.get_size()[i].length; j++) {
         if (mouseButton == LEFT && m.get_size()[i][j] == 0 && move != 1 && buttonPosition((j*26)+v.get_viewX(), (i*26)+v.get_viewY(), 25, 25)) {
@@ -213,25 +213,15 @@ class Aviewer {
     return y;
   }
   void play() {
-    int tileSize = 25;
-    
-    for (int i = 0; i <= (int)frame%m.get_frame().length;i++ ) {
-      int posY = y;
-      for (int k = 0; k < m.get_frame()[i].length; k++) {
-        int posX = x; 
-        for (int j = 0; j < m.get_frame()[i][k].length; j++) {
-          if (m.get_frame()[i][k][j] == 0) {
-            fill(#FFFFFF);
-          } else if (m.get_frame()[i][k][j] == 1) {
-            fill(#000000);
-          }
-          rect(posX, posY, tileSize, tileSize); 
-          posX += tileSize+1;
-        }
-        posY += tileSize+1;
-      }
+    int i = 0;
+    while ( i <= (int)frame%m.get_frame().length) {
+      m.set_size(m.get_frame()[i]);
+      display();
+      i++;
     }
     frame += 0.03;
+  }
+  void stoppu(){
   }
 }
 void setup() {
@@ -244,13 +234,10 @@ void setup() {
 void draw() {
   background(#DDEEFF); 
   c.controlDisplay(); 
-  if (run == 0) {
-    //frameRate(120); 
+  if (run == 0) { 
     c.tileDisplay();
-  } else {
-    //frameRate(15); 
-    c.playA(); 
-    //c.tileDisplay();
+  } else { 
+    c.playA();
   }
 }
 
