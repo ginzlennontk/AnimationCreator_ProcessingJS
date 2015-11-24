@@ -126,8 +126,55 @@ class Acontroller {
     }
     move = 0;
   }
-  
-  void addAll(){
+  void leftAll() {
+    for (int i = 0; i < m.get_size().length; i++) {
+      remove_tile(0, i);
+    }
+    for (int i = 0; i < m.get_size()[0].length-1; i++) {
+      for (int j = 0; j < m.get_size().length; j++) {
+        if (m.get_size()[j][i+1] == 1) {
+          move_tile(i+1, j, i, j);
+        }
+      }
+    }
+  }
+  void rightAll() {
+    for (int i = 0; i < m.get_size().length; i++) {
+      remove_tile(m.get_size()[i].length-1, i);
+    }
+    for (int i = m.get_size()[0].length-1; i > 0; i--) {
+      for (int j = 0; j < m.get_size().length; j++) {
+        if (m.get_size()[j][i-1] == 1) {
+          move_tile(i-1, j, i, j);
+        }
+      }
+    }
+  }
+  void upAll() {
+    for (int i = 0; i < m.get_size()[0].length; i++) {
+      remove_tile(i, 0);
+    }
+    for (int i = 0; i < m.get_size().length-1; i++) {
+      for (int j = 0; j < m.get_size()[i].length; j++) {
+        if (m.get_size()[i+1][j] == 1) {
+          move_tile(j, i+1, j, i);
+        }
+      }
+    }
+  }
+  void downAll() {
+    for (int i = 0; i < m.get_size()[0].length; i++) {
+      remove_tile(i, m.get_size().length-1);
+    }
+    for (int i = m.get_size().length-1; i > 0; i--) {
+      for (int j = 0; j < m.get_size()[i].length; j++) {
+        if (m.get_size()[i-1][j] == 1) {
+          move_tile(j, i-1, j, i);
+        }
+      }
+    }
+  }
+  void addAll() {
     for (int i = 0; i < m.get_size().length; i++) {
       for (int j = 0; j < m.get_size()[i].length; j++) {
         current[i][j] = 1;
@@ -135,7 +182,7 @@ class Acontroller {
     }
     m.set_size(current);
   }
-  void removeAll(){
+  void removeAll() {
     for (int i = 0; i < m.get_size().length; i++) {
       for (int j = 0; j < m.get_size()[i].length; j++) {
         current[i][j] = 0;
@@ -145,10 +192,10 @@ class Acontroller {
   }
   void tileDisplay() {
     v.display();
-    textAlign(LEFT,CENTER);
+    textAlign(LEFT, CENTER);
     fill(0);
-    text("Total Tile(s) : "+m.totalTile(),20,320);
-    text("Total Frame(s) : "+m.get_frame().length,390,320);
+    text("Total Tile(s) : "+m.totalTile(), 20, 320);
+    text("Total Frame(s) : "+m.get_frame().length, 390, 320);
   }
   void controlDisplay() { 
     controlButton(20, 10, 90, 30, 40, #008800, "Add Frame", 255);
@@ -158,8 +205,18 @@ class Acontroller {
     controlButton(190, 350, 40, 25, 30, #008800, "Play", 255);
     controlButton(235, 350, 40, 25, 30, #FF8800, "Pause", 255);
     controlButton(280, 350, 40, 25, 30, #FF0000, "Stop", 255);
-    controlButton(500, 200, 130, 30, 15, 0, "Add All", 255);
-    controlButton(500, 240, 130, 30, 15, 0, "Remve All", 255);
+    controlButton(500, 50, 130, 20, 20, 255, "All Tiles", #66BB11);
+    controlButton(500, 80, 60, 30, 15, #FF5522, "Left", 255);
+    controlButton(570, 80, 60, 30, 15, #77BB00, "Right", 255);
+    controlButton(500, 120, 60, 30, 15, #00AAEE, "Up", 255);
+    controlButton(570, 120, 60, 30, 15, #FFBB00, "Down", 255);
+    controlButton(500, 160, 130, 30, 15, #223399, "Add All", 255);
+    controlButton(500, 200, 130, 30, 15, #BB0055, "Remove All", 255);
+    controlButton(500, 250, 130, 20, 20, 255, "Tile Color", #66BB11);
+    controlButton(500, 280, 25, 25, 0, 0, "", 0);
+    controlButton(535, 280, 25, 25, 0, #FF5500, "", 0);
+    controlButton(570, 280, 25, 25, 0, #BBDD00, "", 0);
+    controlButton(605, 280, 25, 25, 0, #0099CC, "", 0);
   }
   void playA() {
     v.playDisplay();
@@ -175,8 +232,6 @@ class Acontroller {
           add_tile(j, i);
         } else if (mouseButton == RIGHT && buttonPosition(j*26+v.get_viewX(), i*26+v.get_viewY(), 25, 25)  && run != 1 && pause != 1 ) {
           remove_tile(j, i);
-          move = 0;   
-          println("\nDisplay All Frame");
           for (int n = 0; n < m.get_size().length; n++) {
             for (int l = 0; l < m.get_size()[i].length; l++) {
               if (current[n][l] == 2) {
@@ -269,10 +324,26 @@ class Acontroller {
       remove_frame();
     } else if (buttonPosition(360, 10, 130, 30) && run != 1  && pause != 1 && m.get_frame().length > 0) {
       remove_allFrame();
-    } else if (buttonPosition(500, 200, 130, 30) && run != 1 && pause != 1) {
+    } else if (buttonPosition(500, 80, 60, 30) && run != 1  && pause != 1) {
+      leftAll();
+    } else if (buttonPosition(570, 80, 60, 30) && run != 1  && pause != 1) {
+      rightAll();
+    } else if (buttonPosition(500, 120, 60, 30) && run != 1  && pause != 1) {
+      upAll();
+    } else if (buttonPosition(570, 120, 60, 30) && run != 1  && pause != 1) {
+      downAll();
+    } else if (buttonPosition(500, 160, 130, 30) && run != 1 && pause != 1) {
       addAll();
-    }else if (buttonPosition(500, 240, 130, 30) && run != 1 && pause != 1) {
+    } else if (buttonPosition(500, 200, 130, 30) && run != 1 && pause != 1) {
       removeAll();
+    } else if (buttonPosition(500, 280, 25, 25)) {
+      v.set_colorTile(0);
+    } else if (buttonPosition(535, 280, 25, 25)) {
+      v.set_colorTile(1);
+    } else if (buttonPosition(570, 280, 25, 25)) {
+      v.set_colorTile(2);
+    } else if (buttonPosition(605, 280, 25, 25)) {
+      v.set_colorTile(3);
     } else if (buttonPosition(190, 350, 40, 25) && m.get_frame().length > 0) {
       run = 1;
       pause = 0;
@@ -285,30 +356,30 @@ class Acontroller {
       v.resetFrame();
       m.set_size(m.get_frame()[m.get_frame().length-1]);
     }
-    
   }
 }
 
 class Aviewer {
   Amaker m;
-  int x;
-  int y;
-  int frameNum;
+  int x, y;
+  int frameNum, colorSelect;
   Aviewer(Amaker maker) {
     m = maker;
     x = 20;
     y = 50;
+    colorSelect = 0;
   }
   void display() {
     int tileSize = 25;
     int posY = y;
+    int tileColor[] = {0, #FF5500, #BBDD00, #0099CC};
     for (int i = 0; i < m.get_size().length; i++) {  
       int posX = x;
       for (int j = 0; j < m.get_size()[i].length; j++) {
         if (m.get_size()[i][j] == 0) {
           fill(#FFFFFF);
         } else if (m.get_size()[i][j] == 1) {
-          fill(#000000);
+          fill(tileColor[colorSelect]);
         } else if (m.get_size()[i][j] == 2) {
           fill(#33FF33);
         } else if (m.get_size()[i][j] == 3) {
@@ -326,6 +397,9 @@ class Aviewer {
   }
   int get_viewY() {
     return y;
+  }
+  void set_colorTile(int select){
+    colorSelect = select;
   }
   void resetFrame() {
     frameNum = 0;
